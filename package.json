@@ -32,5 +32,13 @@
   },
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nshcr/pi-env-allowlist.git"
+  },
+  "homepage": "https://github.com/nshcr/pi-env-allowlist#readme",
+  "bugs": {
+    "url": "https://github.com/nshcr/pi-env-allowlist/issues"
   }
 }

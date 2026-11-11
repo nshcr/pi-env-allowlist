@@ -13,19 +13,19 @@ by a config file.
 ## Install from GitHub
 
 ```sh
-pi install git:github.com/<you>/pi-env-allowlist
+pi install git:github.com/nshcr/pi-env-allowlist
 ```
 
-Pin a tag or commit:
+Pin version 0.1.0:
 
 ```sh
-pi install git:github.com/<you>/pi-env-allowlist@v0.1.0
+pi install git:github.com/nshcr/pi-env-allowlist@v0.1.0
 ```
 
 Try it for a single invocation without adding it to settings:
 
 ```sh
-pi -e git:github.com/<you>/pi-env-allowlist
+pi -e git:github.com/nshcr/pi-env-allowlist
 ```
 
 The package has no runtime dependencies. Pi loads `./src/index.js` from the
@@ -41,12 +41,35 @@ writes the built-in template there (mode `0600`) and shows a notice. Edit that
 generated file: while it exists, it is the only source for the allowlist.
 Deleting it makes the next command recreate the template.
 
-The generated file looks like [`config/env-allowlist.example.json`](config/env-allowlist.example.json):
+The filtering fields below match [`config/env-allowlist.example.json`](config/env-allowlist.example.json):
 
 ```json
 {
-  "allow": ["PATH", "HOME", "USER", "SHELL", "TERM", "LANG", "LC_*", "TMPDIR", "PI_*"],
-  "deny": ["SSH_AUTH_SOCK"]
+  "allow": [
+    "PATH",
+    "HOME",
+    "USER",
+    "LOGNAME",
+    "SHELL",
+    "TERM",
+    "TERM_PROGRAM",
+    "COLORTERM",
+    "LANG",
+    "LANGUAGE",
+    "LC_*",
+    "NO_COLOR",
+    "FORCE_COLOR",
+    "CLICOLOR*",
+    "TMPDIR",
+    "TMP",
+    "TEMP",
+    "PWD",
+    "OLDPWD",
+    "SHLVL",
+    "XDG_*",
+    "PI_*"
+  ],
+  "deny": []
 }
 ```
 
@@ -59,7 +82,7 @@ The generated file looks like [`config/env-allowlist.example.json`](config/env-a
   closed: the command is refused and the error names the file and the problem.
 
 `PI_*` variables are session metadata injected by Pi and contain no
-credentials. `SSH_AUTH_SOCK` is intentionally not allowed by default because it
+credentials. `SSH_AUTH_SOCK` does not match the default allowlist because it
 grants signing access to your ssh-agent.
 
 ## What it blocks
@@ -81,7 +104,7 @@ This is defense in depth, not a sandbox.
 
 - It filters the environment passed to `bash`; it does not restrict what the
   process can read from disk or `/proc`.
-- `ps e`, `/proc/<pid>/mem`, and encoded paths bypass the `/proc` guard.
+- `ps e`, encoded paths, and ptrace-based reads bypass the `/proc` guard.
 - `read` can still read credential files such as `~/.pi/agent/auth.json` or
   `~/.aws/credentials`; file access is out of scope.
 - Commands you type with `!` or `!!` are not filtered.

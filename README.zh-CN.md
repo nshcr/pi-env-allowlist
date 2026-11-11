@@ -7,19 +7,19 @@ Pi 默认把整个进程环境变量传给每一条 bash 命令。启动前导�
 ## 从 GitHub 安装
 
 ```sh
-pi install git:github.com/<you>/pi-env-allowlist
+pi install git:github.com/nshcr/pi-env-allowlist
 ```
 
-固定 tag 或 commit：
+固定 0.1.0 版本：
 
 ```sh
-pi install git:github.com/<you>/pi-env-allowlist@v0.1.0
+pi install git:github.com/nshcr/pi-env-allowlist@v0.1.0
 ```
 
 只试用一次、不写入 settings：
 
 ```sh
-pi -e git:github.com/<you>/pi-env-allowlist
+pi -e git:github.com/nshcr/pi-env-allowlist
 ```
 
 包没有运行时依赖，Pi 通过 `package.json` 的 `pi.extensions` 加载 `./src/index.js`。
@@ -30,12 +30,35 @@ pi -e git:github.com/<you>/pi-env-allowlist
 
 首次运行时如果 `~/.pi/agent/env-allowlist.json` 不存在，扩展会自动写入内置模板（权限 `0600`）并给出一条提示。之后编辑这个生成的文件即可：只要文件存在，它就是白名单的唯一来源；删除它会在下一条命令时重新生成。
 
-生成的内容与 [`config/env-allowlist.example.json`](config/env-allowlist.example.json) 一致：
+以下过滤字段与 [`config/env-allowlist.example.json`](config/env-allowlist.example.json) 一致：
 
 ```json
 {
-  "allow": ["PATH", "HOME", "USER", "SHELL", "TERM", "LANG", "LC_*", "TMPDIR", "PI_*"],
-  "deny": ["SSH_AUTH_SOCK"]
+  "allow": [
+    "PATH",
+    "HOME",
+    "USER",
+    "LOGNAME",
+    "SHELL",
+    "TERM",
+    "TERM_PROGRAM",
+    "COLORTERM",
+    "LANG",
+    "LANGUAGE",
+    "LC_*",
+    "NO_COLOR",
+    "FORCE_COLOR",
+    "CLICOLOR*",
+    "TMPDIR",
+    "TMP",
+    "TEMP",
+    "PWD",
+    "OLDPWD",
+    "SHLVL",
+    "XDG_*",
+    "PI_*"
+  ],
+  "deny": []
 }
 ```
 
@@ -61,7 +84,7 @@ pi -e git:github.com/<you>/pi-env-allowlist
 这是纵深防御，不是沙箱。
 
 - 只过滤传给 `bash` 的环境变量，不限制进程能读哪些文件或 `/proc`。
-- `ps e`、`/proc/<pid>/mem`、编码路径可绕过 `/proc` 拦截。
+- `ps e`、编码路径、ptrace 读取可绕过 `/proc` 拦截。
 - `read` 仍可读取 `~/.pi/agent/auth.json`、`~/.aws/credentials` 等凭据文件；文件访问不在范围内。
 - 你自己用 `!` / `!!` 输入的命令不过滤。
 - 不使用命名空间，所以 dev server、watcher 等后台进程可以跨命令存活。
