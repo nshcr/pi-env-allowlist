@@ -1,0 +1,36 @@
+{
+  "name": "pi-env-allowlist",
+  "version": "0.1.0",
+  "description": "Pi extension that runs bash with an allowlisted environment and blocks reads of /proc/*/environ and /proc/*/mem.",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "pi-package",
+    "pi",
+    "extension",
+    "security",
+    "secrets",
+    "environment"
+  ],
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "files": [
+    "src",
+    "config",
+    "README.md",
+    "README.zh-CN.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "pi": {
+    "extensions": [
+      "./src/index.js"
+    ]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*"
+  }
+}
